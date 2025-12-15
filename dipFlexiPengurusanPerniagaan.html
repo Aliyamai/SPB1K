@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elemen Elektrik - Kursus TVET</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header / Banner -->
+  <section class="banner">
+    <img src="" alt="dip flexi pengurusna perniagaan">
+    <div class="banner-text">
+      <h1>Diploma Flexi Pengurusan Perniagaan </h1>
+       </div>
+  </section>
+
+  <!-- Kenali Bidang -->
+  <section class="content">
+    <h2>Apa itu Diploma Fleksi?</h2>
+    <p>
+    Diploma Fleksi ditawarkan khas untuk pembelajaran yang lebih anjal dan fleksibel, memberi peluang kepada pelajar dewasa dan individu bekerja untuk melanjutkan pengajian tanpa mengganggu komitmen kerjaya sedia ada. Program ini direka dengan kaedah penyampaian yang fleksibel melalui pembelajaran bersemuka dan dalam talian (hibrid).
+  </p>
+
+  <p>
+    Pendekatan Diploma Fleksi membolehkan pelajar memperoleh pengetahuan dan kemahiran dalam tempoh yang lebih singkat dengan kos yang lebih berpatutan. Program ini sesuai untuk meningkatkan kemahiran profesional, menambah nilai kepada kelayakan sedia ada, serta menyokong pembangunan kerjaya dan peribadi.
+  </p>
+
+  <p>
+    Laluan Diploma Fleksi juga membuka peluang kepada golongan dewasa untuk memperoleh kelayakan akademik secara berperingkat, selari dengan keperluan industri semasa dan pembelajaran sepanjang hayat.
+  </p>
+</section>
+
+<!-- Diploma Fleksi -->
+<section class="content">
+  <h2>Diploma Fleksi</h2>
+
+  <div class="flexi-box">
+
+    <div class="flexi-card">
+      <h3>Mod Penyampaian</h3>
+      <p>Bersemuka (Konvensional) dan Dalam Talian (Hibrid)</p>
+    </div>
+
+    <div class="flexi-card">
+      <h3>Mod Penilaian</h3>
+      <ul>
+        <li>Kuiz</li>
+        <li>Tugasan</li>
+        <li>Ujian</li>
+        <li>Peperiksaan</li>
+      </ul>
+    </div>
+
+    <div class="flexi-card">
+      <h3>Nilai Kredit</h3>
+      <p>3 kredit bagi setiap kursus</p>
+    </div>
+
+    <div class="flexi-card">
+      <h3>Tempoh Pengajian</h3>
+      <ul>
+        <li>3 jam setiap kelas</li>
+        <li>2 kelas seminggu</li>
+        <li>7 minggu setiap kursus</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+
+  <footer>
+    <a href="kursus.html" class="btn">← Kembali ke Senarai Kursus</a>
+  </footer>
+
+  <script>
+  const headers = document.querySelectorAll(".accordion-header");
+
+  headers.forEach(header => {
+    header.addEventListener("click", () => {
+      header.classList.toggle("active");
+      const body = header.nextElementSibling;
+
+      if (body.style.maxHeight) {
+        body.style.maxHeight = null;
+      } else {
+        body.style.maxHeight = body.scrollHeight + "px";
+      }
+    });
+  });
+</script>
+
+
+</body>
+</html>

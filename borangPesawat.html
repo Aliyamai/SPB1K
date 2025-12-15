@@ -401,7 +401,7 @@
 
         <!-- Father Info -->
         <div class="parent-card">
-          <h3>👨 Maklumat Bapa</h3>
+          <h3>Maklumat Bapa</h3>
           <div class="form-grid">
             <div class="form-field">
               <label>Nama Bapa</label>
@@ -436,7 +436,7 @@
 
         <!-- Mother Info -->
         <div class="parent-card">
-          <h3>👩 Maklumat Ibu</h3>
+          <h3>Maklumat Ibu</h3>
           <div class="form-grid">
             <div class="form-field">
               <label>Nama Ibu</label>
@@ -486,79 +486,24 @@
         </div>
       </div>
 
-      <!-- Declaration -->
+     <!-- Declaration -->
       <div class="section">
         <div class="section-title">Pengakuan</div>
         
         <div class="declaration-box">
-          <p>Saya mengaku bahawa semua maklumat dan keterangan di atas adalah benar dan tepat.</p>
-          
-          <div class="signature-grid">
-            <div class="form-field">
-              <label>Tarikh</label>
-              <input type="date" name="tarikh">
-            </div>
-            <div class="form-field">
-              <label>Tandatangan Pemohon</label>
-              <input type="text" name="tandatangan" placeholder="Nama penuh sebagai tandatangan">
-            </div>
-          </div>
+          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+            <input type="checkbox" name="pengakuan" required style="margin-top: 4px; width: 20px; height: 20px; accent-color: #ff6b35; cursor: pointer;">
+            <span style="flex: 1; line-height: 1.8; color: #d84315; font-weight: 500;">
+              Saya mengaku bahawa semua maklumat dan keterangan di atas adalah benar dan tepat. <span class="required">*</span>
+            </span>
+          </label>
         </div>
       </div>
-
-      <!-- Program Information (Internal Use) -->
-      <div class="section">
-        <div class="section-title">Maklumat Program (Untuk Kegunaan Pejabat)</div>
-        
-        <div class="program-grid">
-          <div class="form-field">
-            <label>UiTM</label>
-            <input type="text" name="uitm">
-          </div>
-          <div class="form-field">
-            <label>MOA</label>
-            <input type="text" name="moa">
-          </div>
-          <div class="form-field">
-            <label>SKM/DKM</label>
-            <input type="text" name="skm">
-          </div>
-          <div class="form-field">
-            <label>IPTA</label>
-            <input type="text" name="ipta">
-          </div>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label>Kod</label>
-            <input type="text" name="kod">
-          </div>
-          <div class="form-field">
-            <label>Tahap/Tahun</label>
-            <input type="text" name="tahap">
-          </div>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label>Panel Temuduga</label>
-            <input type="text" name="panel">
-          </div>
-          <div class="form-field">
-            <label>Status</label>
-            <div class="radio-group">
-              <label><input type="radio" name="status" value="terima"> Terima</label>
-              <label><input type="radio" name="status" value="tolak"> Tolak</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
+     
       <!-- Action Buttons -->
       <div class="buttons">
         <button type="submit" class="btn btn-submit">Hantar Permohonan</button>
-        <a href="kursusElektrik.html" class="btn btn-back">Kembali</a>
+        <a href="kursusPesawat.html" class="btn btn-back">Kembali</a>
       </div>
     </form>
 
