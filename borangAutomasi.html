@@ -283,7 +283,8 @@
       <p>Kursus Pilihan: Automasi</p>
     </div>
 
-    <form class="form-content">
+    <form class="form-content" id="studentForm">
+      <input type="hidden" name="kursus" value="AUTOMASI">
       <!-- Personal Information -->
       <div class="section">
         <div class="section-title">Maklumat Peribadi</div>
@@ -508,6 +509,73 @@
     </form>
 
   </div>
+
+  <script>
+const SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycbwGuoSUko8Omyjh-ABCI3WxCjYFnYXsYo-tX69OgApZ43L7fxO5msSmRWbI4LaQlouP/exec';
+
+const form = document.getElementById('studentForm');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Menghantar...';
+
+  try {
+    // =====================
+    // AMBIL DATA FORM
+    // =====================
+    const formData = new FormData(form);
+    const data = {};
+
+    for (let [key, value] of formData.entries()) {
+      // checkbox lulusan (boleh banyak)
+      if (key === 'lulusan') {
+        if (!data[key]) data[key] = [];
+        data[key].push(value);
+      } else {
+        data[key] = value;
+      }
+    }
+
+    // tukar array → string
+    if (Array.isArray(data.lulusan)) {
+      data.lulusan = data.lulusan.join(', ');
+    }
+
+    console.log('DATA HANTAR:', data);
+
+    // =====================
+    // HANTAR KE APPS SCRIPT
+    // =====================
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // WAJIB
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    // =====================
+    // SUCCESS
+    // =====================
+    alert('✅ Permohonan berjaya dihantar!');
+    form.reset();
+
+  } catch (error) {
+    console.error(error);
+    alert('❌ Ralat berlaku. Sila cuba lagi.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Hantar Permohonan';
+  }
+});
+
+
+</script>
 
 </body>
 </html>
