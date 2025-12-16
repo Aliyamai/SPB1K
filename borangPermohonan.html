@@ -598,13 +598,13 @@
       <!-- Action Buttons -->
       <div class="buttons">
         <button type="submit" class="btn btn-submit">Hantar Permohonan</button>
-        <a href="kursusElektrik.html" class="btn btn-back">Kembali</a>
+        <a href="kursus.html" class="btn btn-back">Kembali</a>
       </div>
     </form>
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjzjIDkiFtf_G3NwO83d1V-laQA2eWqaELKPaS9bUzQbGXQQbPAoXzN0cf3Vy9lWEu/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_CWRwANChB7LtYTCeAhHnA6exacGZakWQ5ndznLPGL21BmRzYWtnf7iPYNxv_NW_j/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
@@ -617,7 +617,6 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData(form);
     const data = {};
 
-    // Convert FormData ke object
     for (let [key, value] of formData.entries()) {
       if (data[key]) {
         if (!Array.isArray(data[key])) data[key] = [data[key]];
@@ -627,18 +626,17 @@ form.addEventListener('submit', async (e) => {
       }
     }
 
-    // Kalau ada multiple select, join jadi string
     Object.keys(data).forEach(k => {
       if (Array.isArray(data[k])) data[k] = data[k].join(', ');
     });
 
-    // Pastikan key ada untuk Apps Script
     data.kategori = data.kategori || '';
     data.kursus = data.kursus || '';
-    data.pengakuan = form.querySelector('input[name="pengakuan"]')?.checked || false;
+    data.pengakuan = data.pengakuan ? 'Ya' : '';
 
     await fetch(SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
@@ -646,6 +644,15 @@ form.addEventListener('submit', async (e) => {
     // Tunjuk popup
     const modal = document.getElementById('successModal');
     modal.style.display = 'flex';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.zIndex = '9999';
 
   } catch (err) {
     console.error(err);
@@ -661,20 +668,20 @@ function closeModal() {
   const modal = document.getElementById('successModal');
   modal.style.display = 'none';
   form.reset();
-  // Kalau nak scroll balik atas
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  location.reload();
 }
-
 </script>
 
 <!-- Popup HTML -->
 <div id="successModal" style="display:none; align-items:center; justify-content:center;">
   <div style="background:white; padding:30px; border-radius:15px; max-width:400px; text-align:center;">
-    <h2 style="color:#16a34a;"> Berjaya!</h2>
+    <h2 style="color:#16a34a;">✅ Berjaya!</h2>
     <p style="margin:15px 0;">Permohonan anda telah berjaya dihantar.</p>
     <button onclick="closeModal()" style="padding:10px 25px; border:none; background:#ff6b35; color:white; border-radius:8px; cursor:pointer;">OK</button>
   </div>
 </div>
+
+
 
 
 
