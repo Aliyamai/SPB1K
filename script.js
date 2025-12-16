@@ -8,3 +8,43 @@ window.addEventListener('scroll', () => {
     }
   });
 });
+
+// coding borang permohonan masuk google sheet
+      const form = document.getElementById("studentForm");
+
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = {};
+
+        formData.forEach((value, key) => {
+          if (data[key]) {
+            if (!Array.isArray(data[key])) {
+              data[key] = [data[key]];
+            }
+            data[key].push(value);
+          } else {
+            data[key] = value;
+          }
+        });
+
+        fetch("https://script.google.com/macros/s/AKfycbydJRdDuu-o60sZFiCbHcC8JRjdpOAOpdzpkPBy50rfEQxjBhw7j20K5hWww3q--IHs/exec", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(res => {
+          alert("Permohonan berjaya dihantar!");
+          form.reset();
+        })
+        .catch(err => {
+          alert("Ralat berlaku. Sila cuba lagi.");
+          console.error(err);
+        });
+      });
+
+
