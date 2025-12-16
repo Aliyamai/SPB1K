@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Borang Maklumat Pelajar - Pastri</title>
+  <title>Borang Maklumat Pelajar - Elektrik</title>
   <style>
     * {
       margin: 0;
@@ -280,10 +280,105 @@
     <!-- Header -->
     <div class="form-header">
       <h1>BORANG MAKLUMAT PELAJAR</h1>
-      <p>Kursus Pilihan: Pastri</p>
+      <p>Borang Permohonan Kursus</p>
     </div>
 
-    <form class="form-content">
+    <form class="form-content" id="studentForm">
+      <!-- Program Information -->
+        <div class="section">
+          <div class="section-title">Maklumat Program</div>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Kategori Program <span class="required">*</span></label>
+              <select name="kategori" id="kategori" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Latihan TVET">Kursus Latihan TVET</option>
+                <option value="Diploma MQA Sepenuh Masa">Diploma MQA Sepenuh Masa</option>
+                <option value="Diploma WBL">Diploma MQA WBL</option>
+                <option value="Diploma Flexi">Diploma MQA Flexi</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Kursus <span class="required">*</span></label>
+              <select name="kursus" id="kursus" required>
+                <option value="">-- Pilih Kursus --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          const kursusData = {
+            "Latihan TVET": [
+              "Elektrik",
+              "Penyelenggaraan Pesawat",
+              "Multimedia",
+              "Kimpalan",
+              "Kecantikan",
+              "Sistem Komputer",
+              "Pengurusan Pejabat",
+              "Pastri",
+              "Reka Bentuk Grafik",
+              "Kulinari",
+              "Pendidikan Pra Sekolah",
+              "Automasi (Mekatronik)",
+              "Pendidikan Awal Kanak-kanak",
+              "Automotif",
+              "EV Hybrid",
+              "Kejuruteraan Mekanikal",
+              "Perfileman",
+              "Penghawa Dingin",
+              "Ukur Tanah",
+              "Teknologi Maklumat",
+              
+            ],
+            "Diploma MQA Sepenuh Masa": [
+              "Diploma Perakaunan",
+              "Diploma Pelancongan",
+              "Diploma Logistik dan Pelancongan",
+              "Diploma Maritim",
+            ],
+
+            "Diploma WBL": [
+              "Diploma WBL Perakaunan",
+              "Diploma WBL Pengurusan Perniagaan",
+              "Diploma WBL Kewangan dan Perbankan Islam",
+              "Diploma WBL Pengurusan Logistik",
+              "Diploma WBL Pengurusan Sumber Manusia",
+              "Diploma WBL Pemasaran Digital",
+              "Diploma WBL Pendidikan Awal Kanak-kanak",
+              "Diploma WBL Multimedia Kreatif",
+              "Diploma WBL Reka Bentuk Grafik",
+            ],
+
+            "Diploma Flexi": [
+              "Diploma Flexi Pendidikan Awal Kanak-kanak",
+              "Diploma Flexi Pengurusan Sumber Manusia",
+              "Diploma Flexi Pengurusan Perniagaan",
+              "Diploma Flexi Pengurusan Logistik",
+            ]
+          };
+
+          const kategoriSelect = document.getElementById("kategori");
+          const kursusSelect = document.getElementById("kursus");
+
+          kategoriSelect.addEventListener("change", () => {
+            kursusSelect.innerHTML = '<option value="">-- Pilih Kursus --</option>';
+
+            const selected = kategoriSelect.value;
+            if (kursusData[selected]) {
+              kursusData[selected].forEach(k => {
+                const opt = document.createElement("option");
+                opt.value = k;
+                opt.textContent = k;
+                kursusSelect.appendChild(opt);
+              });
+            }
+          });
+        </script>
+
       <!-- Personal Information -->
       <div class="section">
         <div class="section-title">Maklumat Peribadi</div>
@@ -358,8 +453,8 @@
 
         <div class="form-grid full">
           <div class="form-field">
-            <label>Alamat Email</label>
-            <input type="email" name="email">
+            <label>Alamat Email<span class="required">*</span></label>
+            <input type="email" name="email" required>
           </div>
         </div>
       </div>
@@ -503,11 +598,86 @@
       <!-- Action Buttons -->
       <div class="buttons">
         <button type="submit" class="btn btn-submit">Hantar Permohonan</button>
-        <a href="kursusPastri.html" class="btn btn-back">Kembali</a>
+        <a href="kursus.html" class="btn btn-back">Kembali</a>
       </div>
     </form>
-
   </div>
+
+  <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx98U1_oGt6DX3KUC--odyFpKkGwNm3VYalSyB_zekB05EFpD5vY3a04Plwa0I98izd/exec';
+const form = document.getElementById('studentForm');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Menghantar...';
+
+  try {
+    const formData = new FormData(form);
+    const data = {};
+
+    // Convert FormData ke object
+    for (let [key, value] of formData.entries()) {
+      if (data[key]) {
+        if (!Array.isArray(data[key])) data[key] = [data[key]];
+        data[key].push(value);
+      } else {
+        data[key] = value;
+      }
+    }
+
+    // Kalau ada multiple select, join jadi string
+    Object.keys(data).forEach(k => {
+      if (Array.isArray(data[k])) data[k] = data[k].join(', ');
+    });
+
+    // Pastikan key ada untuk Apps Script
+    data.kategori = data.kategori || '';
+    data.kursus = data.kursus || '';
+    data.pengakuan = form.querySelector('input[name="pengakuan"]')?.checked || false;
+
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+
+    // Tunjuk popup
+    const modal = document.getElementById('successModal');
+    modal.style.display = 'flex';
+
+  } catch (err) {
+    console.error(err);
+    alert('❌ Ralat berlaku. Sila cuba lagi.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Hantar Permohonan';
+  }
+});
+
+// Tutup popup & reset borang
+function closeModal() {
+  const modal = document.getElementById('successModal');
+  modal.style.display = 'none';
+  form.reset();
+  // Kalau nak scroll balik atas
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+</script>
+
+<!-- Popup HTML -->
+<div id="successModal" style="display:none; align-items:center; justify-content:center;">
+  <div style="background:white; padding:30px; border-radius:15px; max-width:400px; text-align:center;">
+    <h2 style="color:#16a34a;"> Berjaya!</h2>
+    <p style="margin:15px 0;">Permohonan anda telah berjaya dihantar.</p>
+    <button onclick="closeModal()" style="padding:10px 25px; border:none; background:#ff6b35; color:white; border-radius:8px; cursor:pointer;">OK</button>
+  </div>
+</div>
+
+
+
 
 </body>
 </html>

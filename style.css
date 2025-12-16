@@ -1,3 +1,9 @@
+html {
+  scroll-behavior: smooth;
+}
+
+
+
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -589,7 +595,7 @@ footer .btn:hover {
 }
 
 .contact-info {
-  max-width: 550px;
+  max-width: 600px;
   background: #f3f2f1; 
   padding: 15px;
   border-radius: 10px;
