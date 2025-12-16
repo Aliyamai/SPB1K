@@ -514,66 +514,73 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKu1lbVwwKKI3_Ac6RrwvxIhCHOSYHnRxDNM1t9sLNoTI79CIjqUmHjdwpMIu2L820/exec';
-const form = document.getElementById('studentForm');
-const alertSuccess = document.getElementById('alertSuccess');
-const alertError = document.getElementById('alertError');
+// ================================
+// CONFIG
+// ================================
+const SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycbyZQ92WlrMKFYvZD9ZVh-b2hCBYZnjS3TPGJXADLShCHk7uUJ_Id7g-nF5nAQm58Oh8/exec';
 
+const form = document.getElementById('studentForm');
+
+// ================================
+// SUBMIT FORM
+// ================================
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  alertSuccess.style.display = 'none';
-  alertError.style.display = 'none';
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Menghantar...';
 
-  const btn = form.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  btn.textContent = 'Menghantar...';
+  // ================================
+  // COLLECT DATA
+  // ================================
+  const formData = new FormData(form);
+  const data = {};
 
+  for (let [key, value] of formData.entries()) {
+    // checkbox (lulusan)
+    if (key === 'lulusan') {
+      if (!data[key]) data[key] = [];
+      data[key].push(value);
+    } else {
+      data[key] = value;
+    }
+  }
+
+  // tukar array → string
+  if (Array.isArray(data.lulusan)) {
+    data.lulusan = data.lulusan.join(', ');
+  }
+
+  console.log('DATA HANTAR:', data);
+
+  // ================================
+  // SEND TO APPS SCRIPT
+  // ================================
   try {
-    const formData = new FormData(form);
-    const data = {};
-
-    for (let [key, value] of formData.entries()) {
-      if (key === 'lulusan') {
-        if (!data[key]) data[key] = [];
-        data[key].push(value);
-      } else {
-        data[key] = value;
-      }
-    }
-
-    if (Array.isArray(data.lulusan)) {
-      data.lulusan = data.lulusan.join(', ');
-    }
-
-    // gabung kesihatan
-    if (data.kesihatan && data.kesihatanNyatakan) {
-      data.statusKesihatan = data.kesihatan + ' - ' + data.kesihatanNyatakan;
-    } else if (data.kesihatan) {
-      data.statusKesihatan = data.kesihatan;
-    }
-
-    console.log('Hantar data:', data);
-
-    await fetch(SCRIPT_URL, {
+    const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors', // WAJIB untuk Apps Script
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(data)
     });
 
-    alertSuccess.textContent = '✓ Permohonan berjaya dihantar!';
-    alertSuccess.style.display = 'block';
+    // no-cors → tak boleh baca response
+    alert('✅ Permohonan berjaya dihantar!');
     form.reset();
 
-  } catch (err) {
-    console.error(err);
-    alertError.textContent = '✗ Ralat berlaku. Sila cuba lagi.';
-    alertError.style.display = 'block';
+  } catch (error) {
+    console.error('ERROR:', error);
+    alert('❌ Ralat berlaku. Sila cuba lagi.');
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Hantar Permohonan';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Hantar Permohonan';
   }
 });
+
 </script>
 
 
