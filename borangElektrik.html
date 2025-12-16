@@ -286,7 +286,7 @@
     <div id="alertSuccess" style="display:none; color:green; margin:15px 0;"></div>
     <div id="alertError" style="display:none; color:red; margin:15px 0;"></div>
 
-    <form class="form-content" id="studentForm">
+    <form class="form-content" id="studentForm" data-kursus="Elektrik">
       <input type="hidden" name="kursus" value="ELEKTRIK">
       <!-- Personal Information -->
       <div class="section">
@@ -515,7 +515,7 @@
 
   <script>
 const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbx3o8rGUfwptGaYNKMmUOelHQ1sFaj9EoFJmei2eQk279Ep4v_GIDorvRjLUj4-bOU9/exec';
+  'https://script.google.com/macros/s/AKfycbxsTmg1pKko-wdsty1n7LfPAV5GMIJAzePG-iTKYAHSHKCJB8vuuaAkRIQydApkTABn/exec';
 
 const form = document.getElementById('studentForm');
 
@@ -527,58 +527,52 @@ form.addEventListener('submit', async (e) => {
   btn.textContent = 'Menghantar...';
 
   try {
-    // =====================
-    // AMBIL DATA FORM
-    // =====================
     const formData = new FormData(form);
     const data = {};
 
     for (let [key, value] of formData.entries()) {
-      // checkbox lulusan (boleh banyak)
       if (key === 'lulusan') {
         if (!data[key]) data[key] = [];
         data[key].push(value);
+      } else if (key === 'pengakuan') {
+        data[key] = 'Ya';
       } else {
         data[key] = value;
       }
     }
 
-    // tukar array → string
-    if (Array.isArray(data.lulusan)) {
-      data.lulusan = data.lulusan.join(', ');
-    }
+    if (!data.lulusan) data.lulusan = '';
+    if (Array.isArray(data.lulusan)) data.lulusan = data.lulusan.join(', ');
 
-    console.log('DATA HANTAR:', data);
+    const kursusSheet = form.dataset.kursus || 'DefaultSheet';
+    data.kursus = kursusSheet;
 
-    // =====================
-    // HANTAR KE APPS SCRIPT
-    // =====================
+    console.log('DATA HANTAR:', JSON.stringify(data, null, 2));
+
     await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors', // WAJIB
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
 
-    // =====================
-    // SUCCESS
-    // =====================
-    alert('✅ Permohonan berjaya dihantar!');
+    document.getElementById('alertSuccess').style.display = 'block';
+    document.getElementById('alertSuccess').textContent = '✅ Permohonan berjaya dihantar!';
+    document.getElementById('alertError').style.display = 'none';
     form.reset();
 
   } catch (error) {
     console.error(error);
-    alert('❌ Ralat berlaku. Sila cuba lagi.');
+    document.getElementById('alertError').style.display = 'block';
+    document.getElementById('alertError').textContent = '❌ Ralat berlaku. Sila cuba lagi.';
   } finally {
     btn.disabled = false;
     btn.textContent = 'Hantar Permohonan';
   }
 });
 
-
 </script>
+
 
 
 </body>
