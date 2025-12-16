@@ -284,6 +284,7 @@
     </div>
 
     <form class="form-content" id="studentForm">
+      <input type="hidden" name="kursus" value="ELEKTRIK">
       <!-- Personal Information -->
       <div class="section">
         <div class="section-title">Maklumat Peribadi</div>
@@ -515,7 +516,7 @@ const form = document.getElementById('studentForm');
 const alertSuccess = document.getElementById('alertSuccess');
 const alertError = document.getElementById('alertError');
 
-form.addEventListener('submit', async function(e){
+form.addEventListener('submit', async function(e) {
   e.preventDefault();
   alertSuccess.style.display = 'none';
   alertError.style.display = 'none';
@@ -524,11 +525,12 @@ form.addEventListener('submit', async function(e){
   submitBtn.disabled = true;
   submitBtn.textContent = 'Menghantar...';
 
-  try{
+  try {
     const formData = new FormData(form);
     const data = {};
+
+    // Handle checkbox lulusan
     for (let [key, value] of formData.entries()) {
-      // kalau ada checkbox lulusan, boleh buat array
       if (key === 'lulusan') {
         if (!data[key]) data[key] = [];
         data[key].push(value);
@@ -538,28 +540,37 @@ form.addEventListener('submit', async function(e){
     }
     if (data.lulusan && Array.isArray(data.lulusan)) data.lulusan = data.lulusan.join(', ');
 
-    await fetch(SCRIPT_URL, {
-      method:'POST',
-      mode:'no-cors',
-      headers:{ 'Content-Type':'application/json' },
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(data)
     });
 
-    alertSuccess.textContent = '✓ Permohonan berjaya dihantar!';
-    alertSuccess.style.display = 'block';
-    form.reset();
-  }
-  catch(err){
+    // Parse response JSON
+    const result = await response.json();
+
+    if (result.status === 'success') {
+      alertSuccess.textContent = '✓ ' + result.message;
+      alertSuccess.style.display = 'block';
+      form.reset();
+    } else {
+      alertError.textContent = '✗ ' + result.message;
+      alertError.style.display = 'block';
+    }
+
+  } catch (err) {
     console.error(err);
     alertError.textContent = '✗ Ralat berlaku. Sila cuba lagi.';
     alertError.style.display = 'block';
-  }
-  finally{
+  } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Hantar Permohonan';
   }
 });
 </script>
+
 
 </body>
 </html>
