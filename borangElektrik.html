@@ -280,14 +280,75 @@
     <!-- Header -->
     <div class="form-header">
       <h1>BORANG MAKLUMAT PELAJAR</h1>
-      <p>Kursus Pilihan: Elektrik</p>
+      <p>Borang Permohonan Kursus</p>
     </div>
 
-    <div id="alertSuccess" style="display:none; color:green; margin:15px 0;"></div>
-    <div id="alertError" style="display:none; color:red; margin:15px 0;"></div>
+    <form class="form-content" id="studentForm">
+      <!-- Program Information -->
+        <div class="section">
+          <div class="section-title">Maklumat Program</div>
 
-    <form class="form-content" id="studentForm" data-kursus="Elektrik">
-      <input type="hidden" name="kursus" value="ELEKTRIK">
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Kategori Program <span class="required">*</span></label>
+              <select name="kategori" id="kategori" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Latihan TVET">Latihan TVET</option>
+                <option value="Diploma MQA Sepenuh Masa">Diploma MQA Sepenuh Masa</option>
+                <option value="Diploma WBL">Diploma WBL</option>
+                <option value="Diploma Flexi">Diploma Flexi</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Kursus <span class="required">*</span></label>
+              <select name="kursus" id="kursus" required>
+                <option value="">-- Pilih Kursus --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          const kursusData = {
+            "Latihan TVET": [
+              "Elektrik",
+              "Automasi",
+              "Kulinari"
+            ],
+            "Diploma MQA Sepenuh Masa": [
+              "Diploma Elektrik",
+              "Diploma Kulinari"
+            ],
+            "Diploma WBL": [
+              "Diploma WBL Elektrik",
+              "Diploma WBL Automasi"
+            ],
+            "Diploma Flexi": [
+              "Diploma Flexi Elektrik",
+              "Diploma Flexi Automasi",
+              "Diploma Flexi Kulinari"
+            ]
+          };
+
+          const kategoriSelect = document.getElementById("kategori");
+          const kursusSelect = document.getElementById("kursus");
+
+          kategoriSelect.addEventListener("change", () => {
+            kursusSelect.innerHTML = '<option value="">-- Pilih Kursus --</option>';
+
+            const selected = kategoriSelect.value;
+            if (kursusData[selected]) {
+              kursusData[selected].forEach(k => {
+                const opt = document.createElement("option");
+                opt.value = k;
+                opt.textContent = k;
+                kursusSelect.appendChild(opt);
+              });
+            }
+          });
+        </script>
+
       <!-- Personal Information -->
       <div class="section">
         <div class="section-title">Maklumat Peribadi</div>
@@ -510,12 +571,11 @@
         <a href="kursusElektrik.html" class="btn btn-back">Kembali</a>
       </div>
     </form>
-
   </div>
 
   <script>
 const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbxsTmg1pKko-wdsty1n7LfPAV5GMIJAzePG-iTKYAHSHKCJB8vuuaAkRIQydApkTABn/exec';
+  'https://script.google.com/macros/s/AKfycbx98U1_oGt6DX3KUC--odyFpKkGwNm3VYalSyB_zekB05EFpD5vY3a04Plwa0I98izd/exec';
 
 const form = document.getElementById('studentForm');
 
@@ -530,47 +590,55 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData(form);
     const data = {};
 
+    // Ambil semua input ikut name=""
     for (let [key, value] of formData.entries()) {
-      if (key === 'lulusan') {
-        if (!data[key]) data[key] = [];
+      if (data[key]) {
+        // untuk checkbox multiple
+        if (!Array.isArray(data[key])) data[key] = [data[key]];
         data[key].push(value);
-      } else if (key === 'pengakuan') {
-        data[key] = 'Ya';
       } else {
         data[key] = value;
       }
     }
 
-    if (!data.lulusan) data.lulusan = '';
-    if (Array.isArray(data.lulusan)) data.lulusan = data.lulusan.join(', ');
+    // Tukar array → text
+    Object.keys(data).forEach(k => {
+      if (Array.isArray(data[k])) {
+        data[k] = data[k].join(', ');
+      }
+    });
 
-    const kursusSheet = form.dataset.kursus || 'DefaultSheet';
-    data.kursus = kursusSheet;
-
-    console.log('DATA HANTAR:', JSON.stringify(data, null, 2));
+    // Safety (wajib ada)
+    data.kategori = data.kategori || '';
+    data.kursus = data.kursus || '';
+    data.pengakuan = data.pengakuan ? 'Ya' : '';
 
     await fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(data)
     });
 
     document.getElementById('alertSuccess').style.display = 'block';
-    document.getElementById('alertSuccess').textContent = '✅ Permohonan berjaya dihantar!';
+    document.getElementById('alertSuccess').textContent =
+      '✅ Permohonan berjaya dihantar!';
     document.getElementById('alertError').style.display = 'none';
+
     form.reset();
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     document.getElementById('alertError').style.display = 'block';
-    document.getElementById('alertError').textContent = '❌ Ralat berlaku. Sila cuba lagi.';
+    document.getElementById('alertError').textContent =
+      '❌ Ralat berlaku. Sila cuba lagi.';
   } finally {
     btn.disabled = false;
     btn.textContent = 'Hantar Permohonan';
   }
 });
-
 </script>
 
 
