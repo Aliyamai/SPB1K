@@ -604,7 +604,7 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYvdq7wMAAP8OMPi3z4b1Lu4yLKUIOzmj5Vfh15vQrIoY_RWFM8s8PmDZhaA_rPfY3/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6VliufZOo4NAZb9l3VX7cgN0JKuVMaIFPrgq4ThSLp5WI5ysOyfdSG2xhhtS2a-IW/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
@@ -617,7 +617,6 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData(form);
     const data = {};
 
-    // Kumpul semua data dari form
     for (let [key, value] of formData.entries()) {
       if (data[key]) {
         if (!Array.isArray(data[key])) data[key] = [data[key]];
@@ -627,47 +626,35 @@ form.addEventListener('submit', async (e) => {
       }
     }
 
-    // Convert array ke string untuk checkbox yang multiple
     Object.keys(data).forEach(k => {
       if (Array.isArray(data[k])) data[k] = data[k].join(', ');
     });
 
-    // PENTING: Pastikan field wajib ada (walau kosong)
     data.kategori = data.kategori || '';
     data.kursus = data.kursus || '';
-    data.nama = data.nama || '';
-    data.nokp = data.nokp || '';
-    data.email = data.email || '';  // ← INI PENTING!
-    data.telefonB = data.telefonB || '';
-    data.pengakuan = data.pengakuan ? true : false;  // ← Hantar boolean je
+    data.pengakuan = data.pengakuan ? 'Ya' : '';
 
-    console.log('Data yang dihantar:', data); // Debug
-
-    const response = await fetch(SCRIPT_URL, {
+    await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
 
-    if (response.ok) {
-      // Tunjuk popup
-      const modal = document.getElementById('successModal');
-      modal.style.display = 'flex';
-      modal.style.position = 'fixed';
-      modal.style.top = '0';
-      modal.style.left = '0';
-      modal.style.width = '100%';
-      modal.style.height = '100%';
-      modal.style.alignItems = 'center';
-      modal.style.justifyContent = 'center';
-      modal.style.background = 'rgba(0,0,0,0.5)';
-      modal.style.zIndex = '9999';
-    } else {
-      alert('❌ Ralat berlaku. Sila cuba lagi.');
-    }
+    // Tunjuk popup
+    const modal = document.getElementById('successModal');
+    modal.style.display = 'flex';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.zIndex = '9999';
 
   } catch (err) {
-    console.error('Error:', err);
+    console.error(err);
     alert('❌ Ralat berlaku. Sila cuba lagi.');
   } finally {
     btn.disabled = false;
