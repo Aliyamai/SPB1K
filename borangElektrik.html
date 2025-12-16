@@ -574,14 +574,11 @@
   </div>
 
   <script>
-const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbx98U1_oGt6DX3KUC--odyFpKkGwNm3VYalSyB_zekB05EFpD5vY3a04Plwa0I98izd/exec';
-
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx98U1_oGt6DX3KUC--odyFpKkGwNm3VYalSyB_zekB05EFpD5vY3a04Plwa0I98izd/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = 'Menghantar...';
@@ -593,7 +590,6 @@ form.addEventListener('submit', async (e) => {
     // Ambil semua input ikut name=""
     for (let [key, value] of formData.entries()) {
       if (data[key]) {
-        // untuk checkbox multiple
         if (!Array.isArray(data[key])) data[key] = [data[key]];
         data[key].push(value);
       } else {
@@ -603,12 +599,9 @@ form.addEventListener('submit', async (e) => {
 
     // Tukar array → text
     Object.keys(data).forEach(k => {
-      if (Array.isArray(data[k])) {
-        data[k] = data[k].join(', ');
-      }
+      if (Array.isArray(data[k])) data[k] = data[k].join(', ');
     });
 
-    // Safety (wajib ada)
     data.kategori = data.kategori || '';
     data.kursus = data.kursus || '';
     data.pengakuan = data.pengakuan ? 'Ya' : '';
@@ -616,55 +609,39 @@ form.addEventListener('submit', async (e) => {
     await fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
 
-    document.getElementById('alertSuccess').style.display = 'flex';
-    document.getElementById('alertSuccess').textContent =
-      '✅ Permohonan berjaya dihantar!';
-    document.getElementById('alertError').style.display = 'none';
-
-    form.reset();
+    // Tunjuk popup
+    document.getElementById('successModal').style.display = 'flex';
 
   } catch (err) {
     console.error(err);
-    document.getElementById('alertError').style.display = 'block';
-    document.getElementById('alertError').textContent =
-      '❌ Ralat berlaku. Sila cuba lagi.';
+    alert('❌ Ralat berlaku. Sila cuba lagi.');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Hantar Permohonan';
   }
 });
 
+// Tutup popup & reset borang
 function closeModal() {
   document.getElementById('successModal').style.display = 'none';
+  form.reset();
+  location.reload(); // nak auto refresh page
 }
-
-
 </script>
 
-<div id="successModal"
-     style="display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,.5);
-            align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:white; padding:30px; border-radius:15px;
-              max-width:400px; text-align:center;">
+<!-- Popup HTML -->
+<div id="successModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); align-items:center; justify-content:center; z-index:9999;">
+  <div style="background:white; padding:30px; border-radius:15px; max-width:400px; text-align:center;">
     <h2 style="color:#16a34a;">✅ Berjaya!</h2>
-    <p style="margin:15px 0;">
-      Permohonan anda telah berjaya dihantar.
-    </p>
-    <button onclick="closeModal()"
-            style="padding:10px 25px; border:none;
-                   background:#ff6b35; color:white;
-                   border-radius:8px; cursor:pointer;">
-      OK
-    </button>
+    <p style="margin:15px 0;">Permohonan anda telah berjaya dihantar.</p>
+    <button onclick="closeModal()" style="padding:10px 25px; border:none; background:#ff6b35; color:white; border-radius:8px; cursor:pointer;">OK</button>
   </div>
 </div>
+
 
 
 
