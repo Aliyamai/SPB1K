@@ -604,63 +604,74 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_1YxQsmtpHKzl-8N473tdMLllZHQ7SqdSPq2_o4PdPftWrmsUVDh5pPbUWaRDBgL3/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_1YxQsmtpHKzl-8N473tdMLllZHQ7SqdSPq2_o4PdPftWrmsUVDh5pPbUWaRDBgL3/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = 'Menghantar...';
 
-  try {
-    const formData = new FormData(form);
-    const data = {};
+  // Ambil semua data borang
+  const formData = new FormData(form);
+  const data = {};
 
-    for (let [key, value] of formData.entries()) {
-      if (data[key]) {
-        if (!Array.isArray(data[key])) data[key] = [data[key]];
-        data[key].push(value);
-      } else {
-        data[key] = value;
-      }
+  for (let [key, value] of formData.entries()) {
+    if (data[key]) {
+      if (!Array.isArray(data[key])) data[key] = [data[key]];
+      data[key].push(value);
+    } else {
+      data[key] = value;
     }
+  }
 
-    Object.keys(data).forEach(k => {
-      if (Array.isArray(data[k])) data[k] = data[k].join(', ');
-    });
+  // Convert array to comma-separated string
+  Object.keys(data).forEach(k => {
+    if (Array.isArray(data[k])) data[k] = data[k].join(', ');
+  });
 
-    data.kategori = data.kategori || '';
-    data.kursus = data.kursus || '';
-    data.pengakuan = data.pengakuan ? 'Ya' : '';
+  data.kategori = data.kategori || '';
+  data.kursus = data.kursus || '';
+  data.pengakuan = data.pengakuan ? 'Ya' : '';
 
-    await fetch(SCRIPT_URL, {
+  try {
+    const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
 
-    // Tunjuk popup
-    const modal = document.getElementById('successModal');
-    modal.style.display = 'flex';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.background = 'rgba(0,0,0,0.5)';
-    modal.style.zIndex = '9999';
+    // Optional: check response
+    console.log('Response:', response);
+
+    // Show success popup
+    showModal();
 
   } catch (err) {
-    console.error(err);
+    console.error('Error:', err);
     alert('❌ Ralat berlaku. Sila cuba lagi.');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Hantar Permohonan';
   }
 });
+
+// Fungsi popup
+function showModal() {
+  const modal = document.getElementById('successModal');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.background = 'rgba(0,0,0,0.5)';
+  modal.style.zIndex = '9999';
+}
 
 // Tutup popup & reset borang
 function closeModal() {
@@ -675,10 +686,11 @@ function closeModal() {
 <div id="successModal" style="display:none; align-items:center; justify-content:center;">
   <div style="background:white; padding:30px; border-radius:15px; max-width:400px; text-align:center;">
     <h2 style="color:#16a34a;">Berjaya!</h2>
-    <p style="margin:15px 0;">Permohonan anda telah berjaya dihantar.</p>
+    <p style="margin:15px 0;">Permohonan anda telah berjaya dihantar dan sedang dalam proses semakan.</p>
     <button onclick="closeModal()" style="padding:10px 25px; border:none; background:#ff6b35; color:white; border-radius:8px; cursor:pointer;">OK</button>
   </div>
 </div>
+
 
 </body>
 </html>
