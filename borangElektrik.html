@@ -514,7 +514,7 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo0AuaeJM_ExC8XRWU7gb-EbwlZMHHNLS1heTKX8GnyVj7op_Akoh9oxRziq8dwOjG/exec'; // ganti dengan URL Web App kau
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo0AuaeJM_ExC8XRWU7gb-EbwlZMHHNLS1heTKX8GnyVj7op_Akoh9oxRziq8dwOjG/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
@@ -525,7 +525,6 @@ form.addEventListener('submit', async (e) => {
   btn.textContent = 'Menghantar...';
 
   try {
-    // Ambil semua data dari form
     const formData = new FormData(form);
     const data = {};
 
@@ -534,14 +533,23 @@ form.addEventListener('submit', async (e) => {
       if (key === 'lulusan') {
         if (!data[key]) data[key] = [];
         data[key].push(value);
-      } else if (key === 'pengakuan') {
-        // Tambah tarikh dan tandatangan automatik
-        data['tarikh'] = new Date().toISOString().split('T')[0];
-        data['tandatangan'] = formData.get('nama') || '';
-      } else {
+      } 
+      // Handle status kesihatan checkbox
+      else if (key === 'kesihatan') {
+        data['statusKesihatan'] = value;
+      } 
+      // Handle pengakuan checkbox
+      else if (key === 'pengakuan') {
+        data['pengakuan'] = 'Tarikh: ' + new Date().toISOString().split('T')[0] +
+                            ', Tandatangan: ' + (formData.get('nama') || '-');
+      } 
+      else {
         data[key] = value;
       }
     }
+
+    // Masalah kesihatan input
+    data['kesihatanNyatakan'] = formData.get('kesihatanNyatakan') || '';
 
     // Convert array lulusan ke string
     if (Array.isArray(data.lulusan)) {
@@ -550,7 +558,6 @@ form.addEventListener('submit', async (e) => {
 
     console.log('Hantar data:', data);
 
-    // POST ke Apps Script
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
