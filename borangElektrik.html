@@ -514,9 +514,7 @@
   </div>
 
   <script>
-const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbzG9VV9GaQ5hTRxwul7Woqidaheu_bt02urn0ABxUYMux3eODvsBjrhXWeN5kE8H2LW/exec';
-
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo0AuaeJM_ExC8XRWU7gb-EbwlZMHHNLS1heTKX8GnyVj7op_Akoh9oxRziq8dwOjG/exec'; // ganti dengan URL Web App kau
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
@@ -527,57 +525,55 @@ form.addEventListener('submit', async (e) => {
   btn.textContent = 'Menghantar...';
 
   try {
-    // =====================
-    // AMBIL DATA FORM
-    // =====================
+    // Ambil semua data dari form
     const formData = new FormData(form);
     const data = {};
 
     for (let [key, value] of formData.entries()) {
-      // checkbox lulusan (boleh banyak)
+      // Handle multiple checkbox (lulusan)
       if (key === 'lulusan') {
         if (!data[key]) data[key] = [];
         data[key].push(value);
+      } else if (key === 'pengakuan') {
+        // Tambah tarikh dan tandatangan automatik
+        data['tarikh'] = new Date().toISOString().split('T')[0];
+        data['tandatangan'] = formData.get('nama') || '';
       } else {
         data[key] = value;
       }
     }
 
-    // tukar array → string
+    // Convert array lulusan ke string
     if (Array.isArray(data.lulusan)) {
       data.lulusan = data.lulusan.join(', ');
     }
 
-    console.log('DATA HANTAR:', data);
+    console.log('Hantar data:', data);
 
-    // =====================
-    // HANTAR KE APPS SCRIPT
-    // =====================
-    await fetch(SCRIPT_URL, {
+    // POST ke Apps Script
+    const response = await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors', // WAJIB
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
 
-    // =====================
-    // SUCCESS
-    // =====================
-    alert('✅ Permohonan berjaya dihantar!');
-    form.reset();
+    const result = await response.json();
 
-  } catch (error) {
-    console.error(error);
-    alert('❌ Ralat berlaku. Sila cuba lagi.');
+    if (result.status === 'success') {
+      alert('✓ Permohonan berjaya dihantar!');
+      form.reset();
+    } else {
+      alert('✗ Ralat berlaku: ' + result.message);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert('✗ Ralat berlaku. Sila cuba lagi.');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Hantar Permohonan';
   }
 });
-
-
 </script>
 
 
