@@ -617,6 +617,7 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData(form);
     const data = {};
 
+    // Kumpul semua data dari form
     for (let [key, value] of formData.entries()) {
       if (data[key]) {
         if (!Array.isArray(data[key])) data[key] = [data[key]];
@@ -626,35 +627,47 @@ form.addEventListener('submit', async (e) => {
       }
     }
 
+    // Convert array ke string untuk checkbox yang multiple
     Object.keys(data).forEach(k => {
       if (Array.isArray(data[k])) data[k] = data[k].join(', ');
     });
 
+    // PENTING: Pastikan field wajib ada (walau kosong)
     data.kategori = data.kategori || '';
     data.kursus = data.kursus || '';
-    data.pengakuan = data.pengakuan ? 'Ya' : '';
+    data.nama = data.nama || '';
+    data.nokp = data.nokp || '';
+    data.email = data.email || '';  // ← INI PENTING!
+    data.telefonB = data.telefonB || '';
+    data.pengakuan = data.pengakuan ? true : false;  // ← Hantar boolean je
 
-    await fetch(SCRIPT_URL, {
+    console.log('Data yang dihantar:', data); // Debug
+
+    const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
 
-    // Tunjuk popup
-    const modal = document.getElementById('successModal');
-    modal.style.display = 'flex';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.background = 'rgba(0,0,0,0.5)';
-    modal.style.zIndex = '9999';
+    if (response.ok) {
+      // Tunjuk popup
+      const modal = document.getElementById('successModal');
+      modal.style.display = 'flex';
+      modal.style.position = 'fixed';
+      modal.style.top = '0';
+      modal.style.left = '0';
+      modal.style.width = '100%';
+      modal.style.height = '100%';
+      modal.style.alignItems = 'center';
+      modal.style.justifyContent = 'center';
+      modal.style.background = 'rgba(0,0,0,0.5)';
+      modal.style.zIndex = '9999';
+    } else {
+      alert('❌ Ralat berlaku. Sila cuba lagi.');
+    }
 
   } catch (err) {
-    console.error(err);
+    console.error('Error:', err);
     alert('❌ Ralat berlaku. Sila cuba lagi.');
   } finally {
     btn.disabled = false;
