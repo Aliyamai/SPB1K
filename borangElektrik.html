@@ -509,6 +509,57 @@
 
   </div>
 
-  
+  <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFaX8iZ8QhLcMOT-sWTYl0p0w9UJYgQmY-EZo8xn6x23Q96eVu5pus4GGTW_WjkR7y/exec';
+const form = document.getElementById('studentForm');
+const alertSuccess = document.getElementById('alertSuccess');
+const alertError = document.getElementById('alertError');
+
+form.addEventListener('submit', async function(e){
+  e.preventDefault();
+  alertSuccess.style.display = 'none';
+  alertError.style.display = 'none';
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Menghantar...';
+
+  try{
+    const formData = new FormData(form);
+    const data = {};
+    for (let [key, value] of formData.entries()) {
+      // kalau ada checkbox lulusan, boleh buat array
+      if (key === 'lulusan') {
+        if (!data[key]) data[key] = [];
+        data[key].push(value);
+      } else {
+        data[key] = value;
+      }
+    }
+    if (data.lulusan && Array.isArray(data.lulusan)) data.lulusan = data.lulusan.join(', ');
+
+    await fetch(SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    alertSuccess.textContent = '✓ Permohonan berjaya dihantar!';
+    alertSuccess.style.display = 'block';
+    form.reset();
+  }
+  catch(err){
+    console.error(err);
+    alertError.textContent = '✗ Ralat berlaku. Sila cuba lagi.';
+    alertError.style.display = 'block';
+  }
+  finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Hantar Permohonan';
+  }
+});
+</script>
+
 </body>
 </html>
