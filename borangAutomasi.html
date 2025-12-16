@@ -531,37 +531,19 @@ form.addEventListener('submit', async (e) => {
     const data = {};
 
     for (let [key, value] of formData.entries()) {
-      // checkbox lulusan (boleh pilih banyak)
+      // checkbox lulusan (boleh banyak)
       if (key === 'lulusan') {
         if (!data[key]) data[key] = [];
         data[key].push(value);
-      }
-      // pengakuan → tambah tarikh & tandatangan automatik
-      else if (key === 'pengakuan') {
-        data['pengakuan'] = 'Tarikh: ' + new Date().toISOString().split('T')[0] +
-                            ', Tandatangan: ' + (formData.get('nama') || '-');
-      }
-      // status kesihatan
-      else if (key === 'kesihatan') {
-        data['statusKesihatan'] = value;
-      }
-      // masalah kesihatan
-      else if (key === 'kesihatanNyatakan') {
-        data['kesihatanNyatakan'] = value || '';
-      }
-      // semua lain-lain
-      else {
+      } else {
         data[key] = value;
       }
     }
 
-    // tukar array lulusan → string
+    // tukar array → string
     if (Array.isArray(data.lulusan)) {
       data.lulusan = data.lulusan.join(', ');
     }
-
-    // pastikan kursus ikut page (hidden input)
-    data['kursus'] = formData.get('kursus') || 'UNKNOWN';
 
     console.log('DATA HANTAR:', data);
 
@@ -570,7 +552,7 @@ form.addEventListener('submit', async (e) => {
     // =====================
     await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors', // wajib untuk Google Apps Script
+      mode: 'no-cors', // WAJIB
       headers: {
         'Content-Type': 'application/json'
       },
@@ -591,6 +573,8 @@ form.addEventListener('submit', async (e) => {
     btn.textContent = 'Hantar Permohonan';
   }
 });
+
+
 </script>
 
 
