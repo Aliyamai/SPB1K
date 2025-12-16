@@ -622,7 +622,7 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify(data)
     });
 
-    document.getElementById('alertSuccess').style.display = 'block';
+    document.getElementById('alertSuccess').style.display = 'flex';
     document.getElementById('alertSuccess').textContent =
       '✅ Permohonan berjaya dihantar!';
     document.getElementById('alertError').style.display = 'none';
@@ -639,6 +639,12 @@ form.addEventListener('submit', async (e) => {
     btn.textContent = 'Hantar Permohonan';
   }
 });
+
+function closeModal() {
+  document.getElementById('successModal').style.display = 'none';
+}
+
+
 </script>
 
 <div id="successModal"
