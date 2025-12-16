@@ -283,6 +283,9 @@
       <p>Kursus Pilihan: Elektrik</p>
     </div>
 
+    <div id="alertSuccess" style="display:none; color:green; margin:15px 0;"></div>
+    <div id="alertError" style="display:none; color:red; margin:15px 0;"></div>
+
     <form class="form-content" id="studentForm">
       <input type="hidden" name="kursus" value="ELEKTRIK">
       <!-- Personal Information -->
@@ -511,25 +514,25 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOc4wQxSvyDFeHlYO-1fVtGF6Z-vHO3pv6kRfD8Rsja1zFyk7BEu44aoJbZ1oM1K4i/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKu1lbVwwKKI3_Ac6RrwvxIhCHOSYHnRxDNM1t9sLNoTI79CIjqUmHjdwpMIu2L820/exec';
 const form = document.getElementById('studentForm');
 const alertSuccess = document.getElementById('alertSuccess');
 const alertError = document.getElementById('alertError');
 
-form.addEventListener('submit', async function(e) {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
   alertSuccess.style.display = 'none';
   alertError.style.display = 'none';
 
-  const submitBtn = form.querySelector('button[type="submit"]');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Menghantar...';
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Menghantar...';
 
   try {
     const formData = new FormData(form);
     const data = {};
 
-    // Handle checkbox lulusan
     for (let [key, value] of formData.entries()) {
       if (key === 'lulusan') {
         if (!data[key]) data[key] = [];
@@ -538,35 +541,37 @@ form.addEventListener('submit', async function(e) {
         data[key] = value;
       }
     }
-    if (data.lulusan && Array.isArray(data.lulusan)) data.lulusan = data.lulusan.join(', ');
 
-    const response = await fetch(SCRIPT_URL, {
+    if (Array.isArray(data.lulusan)) {
+      data.lulusan = data.lulusan.join(', ');
+    }
+
+    // gabung kesihatan
+    if (data.kesihatan && data.kesihatanNyatakan) {
+      data.statusKesihatan = data.kesihatan + ' - ' + data.kesihatanNyatakan;
+    } else if (data.kesihatan) {
+      data.statusKesihatan = data.kesihatan;
+    }
+
+    console.log('Hantar data:', data);
+
+    await fetch(SCRIPT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
 
-    // Parse response JSON
-    const result = await response.json();
-
-    if (result.status === 'success') {
-      alertSuccess.textContent = '✓ ' + result.message;
-      alertSuccess.style.display = 'block';
-      form.reset();
-    } else {
-      alertError.textContent = '✗ ' + result.message;
-      alertError.style.display = 'block';
-    }
+    alertSuccess.textContent = '✓ Permohonan berjaya dihantar!';
+    alertSuccess.style.display = 'block';
+    form.reset();
 
   } catch (err) {
     console.error(err);
     alertError.textContent = '✗ Ralat berlaku. Sila cuba lagi.';
     alertError.style.display = 'block';
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Hantar Permohonan';
+    btn.disabled = false;
+    btn.textContent = 'Hantar Permohonan';
   }
 });
 </script>
