@@ -604,7 +604,7 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAtbsRq-APSLtaZ_o2-F8vykvoWBKGzqvalf-uC0ls-xFiCWsJaKnxppGiaBH6xlWm/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBiwatLZKWKzOfGTT0q1GMIsuuyb6dHHe6JIQUpZJnFeGtIXnzhZxY4H9eAf4xwbb4/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
@@ -617,6 +617,7 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData(form);
     const data = {};
 
+    // Kumpul semua data
     for (let [key, value] of formData.entries()) {
       if (data[key]) {
         if (!Array.isArray(data[key])) data[key] = [data[key]];
@@ -626,16 +627,20 @@ form.addEventListener('submit', async (e) => {
       }
     }
 
+    // Jika ada checkbox banyak, gabungkan jadi string
     Object.keys(data).forEach(k => {
       if (Array.isArray(data[k])) data[k] = data[k].join(', ');
     });
 
+    // Default value
     data.kategori = data.kategori || '';
     data.kursus = data.kursus || '';
     data.pengakuan = data.pengakuan ? 'Ya' : '';
 
+    // Hantar POST
     await fetch(SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors', // penting untuk elak CORS
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
@@ -643,15 +648,6 @@ form.addEventListener('submit', async (e) => {
     // Tunjuk popup
     const modal = document.getElementById('successModal');
     modal.style.display = 'flex';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.background = 'rgba(0,0,0,0.5)';
-    modal.style.zIndex = '9999';
 
   } catch (err) {
     console.error(err);
@@ -667,9 +663,9 @@ function closeModal() {
   const modal = document.getElementById('successModal');
   modal.style.display = 'none';
   form.reset();
-  location.reload();
 }
 </script>
+
 
 <!-- Popup HTML -->
 <div id="successModal" style="display:none; align-items:center; justify-content:center;">
@@ -679,12 +675,6 @@ function closeModal() {
     <button onclick="closeModal()" style="padding:10px 25px; border:none; background:#ff6b35; color:white; border-radius:8px; cursor:pointer;">OK</button>
   </div>
 </div>
-
-
-
-
-
-
 
 </body>
 </html>
