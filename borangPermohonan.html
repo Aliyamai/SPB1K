@@ -601,7 +601,7 @@
   </div>
 
   <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzYlJoeJHlTteMQoc9aUW7eyGzElPiWW1ise2gSVPOQ9mqNRiQgsa_melhtwpNNcwW/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUiQBh6B9NF-5vbN1b4ziy27jnvXkoPRViZk9Q0FdzHLTIkcslX1qWfL0C0mtGPgVF/exec';
 const form = document.getElementById('studentForm');
 
 form.addEventListener('submit', async (e) => {
@@ -636,7 +636,9 @@ form.addEventListener('submit', async (e) => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
+    const result = await res.json();
 
+    if (result.status === 'success'){
     // Tunjuk popup
     const modal = document.getElementById('successModal');
     modal.style.display = 'flex';
@@ -649,6 +651,9 @@ form.addEventListener('submit', async (e) => {
     modal.style.justifyContent = 'center';
     modal.style.background = 'rgba(0,0,0,0.5)';
     modal.style.zIndex = '9999';
+  } else {
+    alert('❌ Ralat daripada server: ' + result.message);
+  }
 
   } catch (err) {
     console.error(err);
