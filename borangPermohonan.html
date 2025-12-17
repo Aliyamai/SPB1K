@@ -636,9 +636,7 @@ form.addEventListener('submit', async (e) => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
-    const result = await res.json();
 
-    if (result.status === 'success'){
     // Tunjuk popup
     const modal = document.getElementById('successModal');
     modal.style.display = 'flex';
@@ -651,9 +649,6 @@ form.addEventListener('submit', async (e) => {
     modal.style.justifyContent = 'center';
     modal.style.background = 'rgba(0,0,0,0.5)';
     modal.style.zIndex = '9999';
-  } else {
-    alert('❌ Ralat daripada server: ' + result.message);
-  }
 
   } catch (err) {
     console.error(err);
@@ -676,7 +671,7 @@ function closeModal() {
 <!-- Popup HTML -->
 <div id="successModal" style="display:none; align-items:center; justify-content:center;">
   <div style="background:white; padding:30px; border-radius:15px; max-width:400px; text-align:center;">
-    <h2 style="color:#16a34a;"> Berjaya!</h2>
+    <h2 style="color:#16a34a;">Berjaya!</h2>
     <p style="margin:15px 0;">Permohonan anda telah berjaya dihantar.</p>
     <button onclick="closeModal()" style="padding:10px 25px; border:none; background:#ff6b35; color:white; border-radius:8px; cursor:pointer;">OK</button>
   </div>
