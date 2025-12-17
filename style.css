@@ -2,8 +2,6 @@ html {
   scroll-behavior: smooth;
 }
 
-
-
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -295,11 +293,12 @@ h1 {
 }
 
 .container {
-  width: 90%;
-  max-width: 1100px;
-  margin: 30px auto;
-
+  max-width: 1200px;
+  width: 100%;
+  padding: 16px;
+  margin: auto;
 }
+
 
 .section-title {
   font-size: 24px;
@@ -694,4 +693,25 @@ footer .btn:hover {
 .flexi-card li {
   margin-bottom: 6px;
 }
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  form {
+    width: 100% !important;
+    padding: 15px;
+  }
+
+  input, select, textarea, button {
+    width: 100% !important;
+    font-size: 16px;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+}
+
 
